@@ -21,14 +21,14 @@ def test_synthesize_ptr_hostname_64():
 
 def test_synthesize_ptr_hostname_56():
     """Test PTR hostname synthesis for /56 network."""
-    addr = ipaddress.IPv6Address("2001:db8:100:1234:5678:9abc:def0:1234")
+    addr = ipaddress.IPv6Address("2001:db8:100:12:3456:789a:bcde:f012")
     network = ipaddress.IPv6Network("2001:db8:100::/56")
     template = "host-%DIGITS%.example.com"
     
     config = NetworkConfig(network, template)
     hostname = synthesize_ptr_hostname(addr, config)
     
-    assert hostname == "host-12345678abcdef01234.example.com"
+    assert hostname == "host-123456789abcdef012.example.com"
 
 
 def test_synthesize_ptr_hostname_80():
@@ -40,7 +40,7 @@ def test_synthesize_ptr_hostname_80():
     config = NetworkConfig(network, template)
     hostname = synthesize_ptr_hostname(addr, config)
     
-    assert hostname == "device-12345678.local"
+    assert hostname == "device-000012345678.local"
 
 
 def test_find_matching_network():

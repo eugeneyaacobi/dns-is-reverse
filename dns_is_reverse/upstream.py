@@ -31,7 +31,9 @@ def query_upstream(upstream_ip: str, qname: str, timeout: float = 2.0) -> Option
             ptr_values = []
             for rr in response.rr:
                 if rr.rtype == dnslib.QTYPE.PTR:
-                    ptr_values.append(str(rr.rdata))
+                    # Strip trailing dot from PTR response
+                    ptr_value = str(rr.rdata).rstrip('.')
+                    ptr_values.append(ptr_value)
             return ptr_values if ptr_values else None
         
         return None

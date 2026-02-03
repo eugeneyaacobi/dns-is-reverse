@@ -61,10 +61,10 @@ def test_extract_host_digits_64():
 
 def test_extract_host_digits_56():
     """Test extracting host digits from /56 network."""
-    addr = ipaddress.IPv6Address("2001:db8:100:1234:5678:9abc:def0:1234")
+    addr = ipaddress.IPv6Address("2001:db8:100:12:3456:789a:bcde:f012")
     network = ipaddress.IPv6Network("2001:db8:100::/56")
     digits = extract_host_digits(addr, network)
-    assert digits == "12345678abcdef01234"  # 72 bits = 18 hex chars
+    assert digits == "123456789abcdef012"  # 72 bits = 18 hex chars
 
 
 def test_extract_host_digits_out_of_network():
@@ -89,7 +89,7 @@ def test_digits_to_ipv6_56():
     digits = "123456789abcdef012"
     network = ipaddress.IPv6Network("2001:db8:100::/56")
     addr = digits_to_ipv6(digits, network)
-    assert addr == ipaddress.IPv6Address("2001:db8:100:1234:5678:9abc:def0:12")
+    assert addr == ipaddress.IPv6Address("2001:db8:100:12:3456:789a:bcde:f012")
 
 
 def test_digits_to_ipv6_wrong_length():

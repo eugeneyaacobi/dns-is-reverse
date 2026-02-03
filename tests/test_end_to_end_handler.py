@@ -20,7 +20,7 @@ def test_config():
             "2001:4860:4860::8888"
         ),
         NetworkConfig(
-            ipaddress.IPv6Network("2001:db8::/56"),
+            ipaddress.IPv6Network("2001:db8::/64"),
             "host-%DIGITS%.example.com"
         ),
     ]
@@ -32,7 +32,7 @@ def test_ptr_query_synthesis(test_config):
     server = DNSServer(test_config)
     
     # Create PTR query for 2001:db8::1234:5678:9abc:def0
-    qname = "0.f.e.d.c.b.a.9.8.7.6.5.4.3.2.1.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.1.0.0.2.ip6.arpa"
+    qname = "0.f.e.d.c.b.a.9.8.7.6.5.4.3.2.1.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa"
     request = dnslib.DNSRecord.question(qname, 'PTR')
     
     response_data = server.handle_request(request.pack(), ('::1', 12345))
@@ -41,7 +41,7 @@ def test_ptr_query_synthesis(test_config):
     assert response.header.rcode == dnslib.RCODE.NOERROR
     assert len(response.rr) == 1
     assert response.rr[0].rtype == dnslib.QTYPE.PTR
-    assert str(response.rr[0].rdata) == "host-123456789abcdef0.example.com"
+    assert str(response.rr[0].rdata) == "host-123456789abcdef0.example.com."
 
 
 def test_ptr_query_with_upstream_success(test_config):
@@ -52,7 +52,7 @@ def test_ptr_query_with_upstream_success(test_config):
     qname = "6.2.8.0.b.c.e.f.f.f.a.e.6.1.2.0.0.c.c.c.e.0.0.1.8.8.d.4.1.0.0.2.ip6.arpa"
     request = dnslib.DNSRecord.question(qname, 'PTR')
     
-    with patch('dns_is_reverse.upstream.query_upstream') as mock_upstream:
+    with patch('dns_is_reverse.dns_server.query_upstream') as mock_upstream:
         mock_upstream.return_value = ['actual-host.example.com']
         
         response_data = server.handle_request(request.pack(), ('::1', 12345))
@@ -60,7 +60,7 @@ def test_ptr_query_with_upstream_success(test_config):
         
         assert response.header.rcode == dnslib.RCODE.NOERROR
         assert len(response.rr) == 1
-        assert str(response.rr[0].rdata) == "actual-host.example.com"
+        assert str(response.rr[0].rdata) == "actual-host.example.com."
         
         # Verify upstream was queried with .upstream suffix
         mock_upstream.assert_called_once_with(
@@ -76,7 +76,7 @@ def test_ptr_query_with_upstream_fallback(test_config):
     qname = "6.2.8.0.b.c.e.f.f.f.a.e.6.1.2.0.0.c.c.c.e.0.0.1.8.8.d.4.1.0.0.2.ip6.arpa"
     request = dnslib.DNSRecord.question(qname, 'PTR')
     
-    with patch('dns_is_reverse.upstream.query_upstream') as mock_upstream:
+    with patch('dns_is_reverse.dns_server.query_upstream') as mock_upstream:
         mock_upstream.return_value = None  # Upstream failed
         
         response_data = server.handle_request(request.pack(), ('::1', 12345))
@@ -84,7 +84,7 @@ def test_ptr_query_with_upstream_fallback(test_config):
         
         assert response.header.rcode == dnslib.RCODE.NOERROR
         assert len(response.rr) == 1
-        assert str(response.rr[0].rdata) == "ipv6-0216eafffecb0826.nutzer.raumzeitlabor.de"
+        assert str(response.rr[0].rdata) == "ipv6-0216eafffecb0826.nutzer.raumzeitlabor.de."
 
 
 def test_ptr_query_out_of_network(test_config):
@@ -189,7 +189,7 @@ def test_query_logging(test_config, capsys):
     server.handle_request(request.pack(), ('::1', 12345))
     
     captured = capsys.readouterr()
-    assert "Query from ::1: host-123456789abcdef0.example.com AAAA" in captured.out
+    assert "Query from ::1: host-123456789abcdef0.example.com. AAAA" in captured.out
 
 
 def test_response_id_matches_request(test_config):

@@ -54,8 +54,9 @@ def extract_host_digits(addr: ipaddress.IPv6Address, network: ipaddress.IPv6Netw
     host_bits = 128 - network.prefixlen
     digits_len = host_bits // 4
     
-    # Get host portion by XORing with network address
-    host_int = int(addr) ^ int(network.network_address)
+    # Get host portion by masking out network bits
+    host_mask = (1 << host_bits) - 1
+    host_int = int(addr) & host_mask
     return f"{host_int:0{digits_len}x}"
 
 

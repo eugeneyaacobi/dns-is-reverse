@@ -122,7 +122,7 @@ def test_synthesize_different_prefix_sizes():
     
     hostname = "host-123456789abcdef012.net"
     addr = synthesize_aaaa_address(hostname, config56)
-    expected = ipaddress.IPv6Address("2001:db8:100:1234:5678:9abc:def0:12")
+    expected = ipaddress.IPv6Address("2001:db8:100:12:3456:789a:bcde:f012")
     assert addr == expected
     
     # /80 network (12 hex digits)

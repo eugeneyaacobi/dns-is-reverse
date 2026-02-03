@@ -36,7 +36,8 @@ class DNSServer:
         response.header.id = request.header.id
         response.header.qr = 1  # Response
         response.header.aa = 1  # Authoritative
-        response.q = request.q
+        response.header.rcode = dnslib.RCODE.NOERROR  # Default to success
+        response.add_question(request.q)
         
         qname = str(request.q.qname).rstrip('.')
         qtype = request.q.qtype
@@ -70,6 +71,8 @@ class DNSServer:
             ptr_values = query_upstream(network_config.upstream, upstream_qname)
             if ptr_values:
                 for ptr_value in ptr_values:
+                    # Strip trailing dot from upstream response
+                    ptr_value = ptr_value.rstrip('.')
                     rr = dnslib.RR(
                         rname=qname,
                         rtype=dnslib.QTYPE.PTR,
