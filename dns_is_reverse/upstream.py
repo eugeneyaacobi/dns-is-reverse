@@ -3,7 +3,7 @@
 import socket
 from typing import Optional
 
-import dnslib
+import dnslib  # type: ignore
 
 
 def query_upstream(upstream_ip: str, qname: str, timeout: float = 2.0) -> Optional[list[str]]:

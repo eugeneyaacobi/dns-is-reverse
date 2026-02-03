@@ -4,7 +4,7 @@ import socket
 import threading
 from typing import Optional
 
-import dnslib
+import dnslib  # type: ignore
 
 from .config import Config
 from .reverse import ptr_qname_to_ipv6
@@ -27,7 +27,7 @@ class DNSServer:
             # Malformed request
             response = dnslib.DNSRecord()
             response.header.rcode = dnslib.RCODE.FORMERR
-            return response.pack()
+            return response.pack()  # type: ignore
         
         if self.config.query_log:
             print(f"Query from {addr[0]}: {request.q.qname} {dnslib.QTYPE[request.q.qtype]}")
@@ -49,7 +49,7 @@ class DNSServer:
         else:
             response.header.rcode = dnslib.RCODE.NXDOMAIN
             
-        return response.pack()
+        return response.pack()  # type: ignore
     
     def _handle_ptr(self, qname: str, response: dnslib.DNSRecord) -> None:
         """Handle PTR query."""
