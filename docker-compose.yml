@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  dns-is-reverse:
+    build: .
+    ports:
+      - "53:53/udp"
+    volumes:
+      - ./test.conf:/etc/dns-is-reverse.conf:ro
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true

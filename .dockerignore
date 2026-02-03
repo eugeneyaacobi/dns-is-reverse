@@ -1,0 +1,6 @@
+tests/
+verify.py
+*.egg-info/
+__pycache__/
+*.pyc
+.git/
