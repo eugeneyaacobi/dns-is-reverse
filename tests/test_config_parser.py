@@ -84,14 +84,14 @@ network 2001:db8::/64
 
 
 def test_missing_listen():
-    """Test error when no listen addresses."""
+    """Test default listen addresses when none specified."""
     config_text = """
 network 2001:db8::/64
     resolves to host-%DIGITS%.com
 """
     
-    with pytest.raises(ValueError, match="No listen addresses"):
-        parse_config(config_text)
+    config = parse_config(config_text)
+    assert config.listen_addresses == ["::", "0.0.0.0"]
 
 
 def test_missing_resolves_to():

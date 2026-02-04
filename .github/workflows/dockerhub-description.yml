@@ -1,0 +1,15 @@
+name: Update Docker Hub Description
+on: release
+jobs:
+  dockerHubDescription:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Docker Hub Description
+      uses: peter-evans/dockerhub-description@v5
+      with:
+        username: ${{ secrets.DOCKERHUB_USER }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        repository: eugeneyaacobi/dns-is-reverse
+        short-description: ${{ github.event.repository.description }}

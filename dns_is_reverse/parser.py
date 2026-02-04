@@ -55,6 +55,6 @@ def parse_config(text: str) -> Config:
             raise ValueError(f"Unknown directive: {line}")
     
     if not listen_addresses:
-        raise ValueError("No listen addresses specified")
+        listen_addresses = ["::", "0.0.0.0"]
     
     return Config(listen_addresses, networks)
