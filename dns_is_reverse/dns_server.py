@@ -135,6 +135,7 @@ class DNSServer:
         """Serve DNS requests on a single address."""
         family = socket.AF_INET6 if ':' in listen_addr else socket.AF_INET
         sock = socket.socket(family, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
         try:
             sock.bind((listen_addr, self.config.port))
